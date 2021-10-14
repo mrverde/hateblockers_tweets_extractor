@@ -1,7 +1,7 @@
 # Hateblockers
 ## Proyecto: Medidor de odio
 
-En este proyecto realizado en Python 3.8 se aborda la creación de un dashboard que busca medir el odio dentro de la red social twitter en función de los tweets de los usuarios.
+En este proyecto realizado en Python 3.8 para [Hateblockers](https://hateblockers.es/) se aborda la creación de un dashboard que busca medir el odio dentro de la red social twitter en función de los tweets de los usuarios.
 
 ## Extractor de tweets
 La extracción de tweets se realiza con el script **hateblockers_tweets_extractor.py**. Para ejecutarlo es necesario en primer lugar crear un virtual environment con las dependencias del archivo **requirements.txt**.
