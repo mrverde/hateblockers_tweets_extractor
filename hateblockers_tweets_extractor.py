@@ -2,6 +2,7 @@ import csv
 import tweepy
 from dotenv import dotenv_values
 from os.path import join, dirname, abspath
+from datetime import datetime, timedelta
 
 from libs.notifications import Notifications
 
@@ -31,6 +32,11 @@ class ExtractTwitterInfo(ConnectToTwitter):
 
     def __init__(self):
         super().__init__()
+
+        self.DAYS_TO_EXTRACT = 7 if int(dotenv_values()['DAYS_TO_EXTRACT']) > 7 else \
+            1 if int(dotenv_values()['DAYS_TO_EXTRACT']) < 1 else \
+            int(dotenv_values()['DAYS_TO_EXTRACT'])
+
         self.read_terms_to_search()
 
     def read_terms_to_search(self):
@@ -64,6 +70,14 @@ class ExtractTwitterInfo(ConnectToTwitter):
             writer = csv.writer(f, delimiter='\t')
             writer.writerow(ls_data)
 
+    @staticmethod
+    def format_date(dt):
+        """
+        Formats a datetime object into a comparable format number
+        :param dt: datetime - Datetime to transform
+        """
+        return int(dt.strftime("%Y%m%d"))
+
     def search_term(self, search: str):
         contador = 1
         self.notification(
@@ -74,6 +88,17 @@ class ExtractTwitterInfo(ConnectToTwitter):
                                        search),
                                    count=100,
                                    tweet_mode='extended').items():
+            # TODO: filtro fecha
+            date = datetime.today() - timedelta(days=self.DAYS_TO_EXTRACT + 1)
+
+            today_date = self.format_date(datetime.today())
+            comparison_date = self.format_date(date)
+            tweet_date = self.format_date(tweet.created_at)
+
+            if tweet_date >= today_date:
+                continue
+            if tweet_date == comparison_date:
+                break
 
             if contador % 100 == 0:
                 self.notification(f'Extracting tweets - {contador}')
